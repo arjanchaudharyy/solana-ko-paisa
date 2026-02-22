@@ -1,84 +1,61 @@
-# 🥟 PasalPoints
+# 🥟 PasalPoints — Web3 Loyalty for Every Nepali Pasal
 
-**Web3 loyalty points for every Nepali pasal — powered by Solana.**
-
-PasalPoints turns every momo plate sold on the streets of Kathmandu into soulbound loyalty points on Solana. No plastic cards, no app downloads, no middlemen. Just crypto-native loyalty that actually works for neighborhood businesses.
-
-Built for the **Superteam Nepal 2026** bounty.
-
-🌐 [Live App](https://pasalpoints.vercel.app) · 🎬 [Video Demo](https://loom.com/share/YOUR_LOOM_ID) · 🔍 [View Token on Devnet](https://solscan.io/token/YOUR_MINT_ADDRESS?cluster=devnet)
+**PasalPoints** turns every momo plate sold on the streets of Kathmandu into soulbound loyalty points on Solana. No plastic cards, no app downloads, no middlemen — just crypto-native loyalty that actually works for neighborhood businesses. Built for the **Superteam Nepal 2026** bounty, PasalPoints proves that Web3 can serve the corner shop, not just the trading desk.
 
 ---
 
-## The Problem
+## 🏗️ Technical Architecture & Extension Deep-Dive
 
-Nepal has hundreds of thousands of small *pasal* shops — from momo stalls in Thamel to tea shops in Pokhara. These businesses run on relationships and repeat customers, but have zero infrastructure for digital loyalty programs. Existing solutions require smartphones, app downloads, or expensive POS hardware most vendors can't afford.
+PasalPoints is a flagship implementation of **Solana Program Library (SPL) Token-2022**, specifically engineered to solve the "Web3 Onboarding Problem" for non-technical users.
 
-PasalPoints brings the power of Solana to the streets where it matters most.
+### The Extension Stack
 
----
-
-## How It Works
-
-```
-Customer walks into a momo pasal
-  → Flashes QR code from PasalPoints app
-  → Merchant pastes customer address into POS terminal
-  → Merchant signs a transaction that:
-      1. Creates the customer's ATA (idempotent — safe to run every time)
-      2. Mints 10 soulbound MOMO points to the customer's wallet
-  → Customer sees their updated balance within 15 seconds
-  → At 50 points → customer burns tokens on-chain → free plate of momo 🎉
-```
-
-**The merchant always pays gas.** Using `createAssociatedTokenAccountIdempotentInstruction`, the merchant wallet sponsors ATA creation rent (~0.002 SOL). The customer never needs SOL to participate — critical for onboarding non-crypto users in Nepal.
+1.  **Non-Transferable (Soulbound)**:
+    *   **The Logic**: Loyalty is a relationship, not a commodity. By using the `NonTransferable` extension, we ensure that MOMO points cannot be sold on secondary markets like Tensor or Magic Eden. This protects the merchant's unit economics and prevents "loyalty farming."
+2.  **Idempotent ATA Creation**:
+    *   **The Problem**: Native Solana UX requires a user to pay "Rent" (~0.002 SOL) for every new token account. In a local pasal, a customer won't spend $0.50 to earn 10 points.
+    *   **The Solution**: We use `createAssociatedTokenAccountIdempotent`. If the account is missing, the **Merchant's transaction pays the rent**. The customer experiences 100% free onboarding.
+3.  **On-Chain Metadata**:
+    *   **The Result**: All token branding (Symbol, Logo, Description) is stored directly within the Mint account using the `Metadata` extension. This makes PasalPoints ultra-lightweight and independent of external metadata providers.
 
 ---
 
-## Architecture
+## 🇳🇵 The Vision: Digitizing the Streets of Nepal
 
-PasalPoints is built on **Solana's Token-2022** program with two key extensions:
+Kathmandu is an economy built on "Pasals" (small corner shops). From the momo stalls of Thamel to the tea houses of Pokhara, the relationship between the *Dai* (shopkeeper) and the *Bhai/Bahini* (customer) is based on trust.
 
-| Extension | Purpose |
-|---|---|
-| `NonTransferable` | Makes MOMO points soulbound. Customers cannot transfer, sell, or farm loyalty points — they are permanently bound to the earning wallet. |
-| `Metadata` | Stores token metadata (name, symbol, URI) directly inside the mint — no Metaplex required. |
+**PasalPoints digitizes that trust.** 
 
----
+By replacing physical cardboard stamps with Soulbound tokens, we provide:
+- **For Merchants**: Data-driven insights into customer frequency and retention for the first time.
+- **For Customers**: A verifiable digital identity that proves their status in the community.
 
-## Features
-
-- **Soulbound Points** — Token-2022 `NonTransferable` extension prevents transfers, botting, and point farming
-- **QR-First UX** — Customers flash their wallet QR; no typing 44-character addresses
-- **Merchant POS Terminal** — Minimal dashboard designed like a real point-of-sale system
-- **One-Tap Burn Redemption** — Burn 50 MOMO on-chain to claim a free plate
-- **Real-Time Balance** — 15-second polling with animated loading states
-- **Clickable Solscan Links** — Every transaction links directly to the explorer
-- **Wallet Rejection Handling** — Clean UX for declined transactions
-- **Gas-Free for Customers** — Merchant sponsors all rent and fees
+### 🛣️ Roadmap: Beyond the Hackathon
+- **Localized NFT Artifacts**: Earn a "Thamel Legend" NFT after 500 MOMO points.
+- **Merchant Liquidity**: Merchants can stake SOL to create temporary "Bonus Multipliers" during festivals like Dashain.
+- **Mobile Vision Scanning**: Integrating native camera scanning for truly friction-less "Point of Sale" interactions.
 
 ---
 
-## Tech Stack
+## 🔥 Features
 
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js 14 (App Router), React 18, TypeScript |
-| Styling | Tailwind CSS, Lucide Icons |
-| Blockchain | Solana Devnet, Token-2022 Program |
-| Wallet | Phantom via `@solana/wallet-adapter` |
-| Notifications | Sonner (dark-themed toasts) |
-| QR Codes | `qrcode.react` |
+- **🛡️ Soulbound Loyalty** — Secured by Token-2022 `NonTransferable` extension.
+- **🧧 Merchant-Funded Onboarding** — Zero gas fees for the Nepali customer.
+- **🥟 'Local Pasal' UX** — High-contrast QR codes and clipboard-ready addresses.
+- **📈 Real-Time Dashboards** — 15s polling for points, including automated polling status.
+- **💅 Kathmandu Aesthetic** — A "Himalayan Dark" theme with Crimson and Gold accents.
+- **🔔 Consumer-Grade Toasts** — Transaction feedback via Sonner with direct Solscan integration.
+- **📜 Transaction Integrity** — Full handling for wallet rejections and on-chain errors.
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js v18+
-- [Solana CLI](https://docs.solana.com/cli/install)
-- A Solana wallet funded with Devnet SOL (`solana airdrop 2`)
+- [Node.js](https://nodejs.org/) v18+
+- [Solana CLI](https://docs.solana.com/cli/install) (for creating the mint keypair)
+- A Solana wallet with Devnet SOL (use `solana airdrop 2`)
 
 ### 1. Clone & Install
 
@@ -90,49 +67,64 @@ npm install
 
 ### 2. Create the MOMO Mint
 
-Generate a Token-2022 mint with `NonTransferable` and `Metadata` extensions:
+Generate a fresh Token-2022 mint with NonTransferable and Metadata extensions:
 
 ```bash
 npm run create-mint
 ```
 
-Copy the output mint address into `lib/constants.ts`:
+This will output a mint address. Copy it and paste into `lib/constants.ts`:
 
 ```ts
 export const MINT_ADDRESS = new PublicKey("YOUR_MINT_ADDRESS_HERE");
 ```
 
-### 3. Run the Dev Server
+### 3. Start the Dev Server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
-
-### 4. Test the Full Flow
-
-1. Connect your **merchant wallet** (the mint authority) at `/merchant`
-2. Open `/customer` in a separate browser profile with a **different wallet**
-3. Paste the customer's address into the merchant POS and issue 10 MOMO
-4. Watch the customer balance update in real time
-5. After 5 issuances (50 MOMO), redeem for a free momo from the customer dashboard
+Open [http://localhost:3000](http://localhost:3000) and you're live.
 
 ---
 
-## Project Structure
+## 🎥 Demo
+
+| Resource | Link |
+|---|---|
+| 🌐 **Live App** | [pasalpoints.vercel.app](https://pasalpoints.vercel.app) |
+| 🎬 **Video Demo** | [Loom Walkthrough](https://loom.com/share/YOUR_LOOM_ID) |
+| 🔍 **Solscan (Mint)** | [View Token on Devnet](https://solscan.io/token/YOUR_MINT_ADDRESS?cluster=devnet) |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | Next.js 14 (App Router), React 18, TypeScript |
+| **Styling** | Tailwind CSS, Lucide Icons |
+| **Blockchain** | Solana Devnet, Token-2022 Program |
+| **Wallet** | Phantom (via `@solana/wallet-adapter`) |
+| **Notifications** | Sonner (dark-themed toasts) |
+| **QR Codes** | qrcode.react |
+
+---
+
+## 📁 Project Structure
 
 ```
 pasalpoints/
 ├── app/
-│   ├── page.tsx              # Landing page
+│   ├── page.tsx              # Landing page (Kathmandu theme)
 │   ├── layout.tsx            # Root layout + Toaster
 │   ├── providers.tsx         # Solana wallet providers
-│   ├── globals.css           # Global styles + wallet adapter overrides
+│   ├── globals.css           # Global styles + wallet overrides
 │   ├── merchant/page.tsx     # Merchant POS dashboard
 │   └── customer/page.tsx     # Customer loyalty dashboard
 ├── lib/
-│   └── constants.ts          # Mint address, RPC endpoint, point thresholds
+│   └── constants.ts          # Mint address, RPC, thresholds
 ├── scripts/
 │   └── create-mint.ts        # Token-2022 mint creation script
 ├── tailwind.config.ts
@@ -142,10 +134,12 @@ pasalpoints/
 
 ---
 
-## License
+## 📄 License
 
-MIT — build freely, earn momos.
+MIT — Build freely, earn momos.
 
 ---
 
-<p align="center">Built with ❤️ for <strong>Superteam Nepal 2026</strong></p>
+<p align="center">
+  <strong>🥟 PasalPoints — Built with ❤️ for Superteam Nepal 2026</strong>
+</p>
